@@ -126,11 +126,13 @@ export default {
   },
   methods: {
     signIn() {
-      axios.post("/users/signin", this.credentials)
+      axios.post("/users/signin", this.credentials) 
         .then(response => {
           console.log("Sign-in successful:", response.data);
           this.signedIn = true;
-          this.userId = response.data.id;
+          console.log(this.userId)
+          this.userId = response.data.user.id;
+          console.log(this.userId+ " "+ response.data.user.id)
           this.fetchTasks(); // Fetch tasks when the user signs in
         })
         .catch(error => {
@@ -139,26 +141,27 @@ export default {
     },
     addTask() {
       const taskData = {
-        ...this.newTask,
-        userId: this.userId, // Set the userId to the currently signed-in user
+          ...this.newTask,
+          userId: this.userId,
       };
-
       axios.post("/tasks", taskData)
-        .then(response => {
-          console.log("Task added successfully:", response.data);
-          this.newTask = {
-            title: '',
-            description: '',
-            dueDate: '',
-            taskCategory: '',
-            taskPriority: '',
-          };
-          this.fetchTasks(); // Fetch tasks after adding a new task
-        })
-        .catch(error => {
-          console.error("Error adding task:", error);
-        });
+          .then(response => {
+              console.log("Task added successfully:", response.data);
+              this.newTask = {
+                  title: '',
+                  description: '',
+                  dueDate: '',
+                  taskCategory: '',
+                  taskPriority: ''
+              };
+              this.fetchTasks();
+          })
+          .catch(error => {
+              console.error("Error adding task:", error.response);
+              // Log the detailed error response from the server
+      });
     },
+
     deleteTask(taskId) {
       axios.delete(`/tasks/${taskId}`)
         .then(response => {
