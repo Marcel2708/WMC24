@@ -9,6 +9,8 @@
       <div class="form-group">
         <label for="pw">Password:</label>
         <input type="password" v-model="user.pw" class="form-control" required>
+        <span v-if="!user.pw" class="error">Password is required</span>
+        <span v-if="user.pw && user.pw.length < 6" class="error">Password must be at least 6 characters</span>
       </div>
       <div class="form-group">
         <label for="email">Email:</label>
@@ -34,6 +36,12 @@ export default {
   },
   methods: {
     addUser() {
+      // Complex validation
+      if (!this.user.userName || !this.user.email || !this.user.pw || this.user.pw.length < 6) {
+        alert("Please fill in all the required fields. Password must be at least 6 characters.");
+        return;
+      }
+
       axios.post("/users", this.user)
         .then(response => {
           console.log("User added successfully:", response.data);
@@ -64,4 +72,8 @@ export default {
 
 <style scoped>
 /* Add your component-specific styles here */
+.error {
+  color: #dc3545;
+  font-size: 12px;
+}
 </style>
